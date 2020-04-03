@@ -18,8 +18,15 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
     return $request->user();
 });
 Route::post('auth/login', "AuthController@store");
+Route::post('/staff/auth/login', "StaffAuthenticationController@store");
 
 Route::group(['middleware' => 'auth:api'], function () {
     Route::get('account/me', "AuthController@show");
     Route::delete('auth/logout', "AuthController@destroy");
+});
+
+
+Route::group(['middleware' => 'auth:staff-api'], function () {
+    Route::get('staff/me', "StaffAuthenticationController@show");
+    Route::delete('staff/auth/logout', "StaffAuthenticationController@destroy");
 });

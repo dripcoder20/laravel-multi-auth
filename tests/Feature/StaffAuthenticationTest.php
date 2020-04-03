@@ -2,12 +2,12 @@
 
 namespace Tests\Feature;
 
-use App\User;
+use App\Staff;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\Response;
 use Tests\TestCase;
 
-class UserAuthenticationTest extends TestCase
+class StaffAuthenticationTest extends TestCase
 {
 
     use RefreshDatabase;
@@ -15,7 +15,7 @@ class UserAuthenticationTest extends TestCase
     /**
      * @var \Illuminate\Database\Eloquent\Collection|\Illuminate\Database\Eloquent\Model
      */
-    private $user;
+    private $staff;
 
     protected function setUp(): void
     {
@@ -23,7 +23,7 @@ class UserAuthenticationTest extends TestCase
         $this->withHeader('X-Requested-With', 'XMLHttpRequest');
         $this->withHeader('Accept', 'application/json');
 
-        $this->user = factory(User::class)->create([
+        $this->staff = factory(Staff::class)->create([
             'email' => 'test@example.com',
             'password' => bcrypt("123456"),
         ]);
@@ -35,13 +35,13 @@ class UserAuthenticationTest extends TestCase
     public function it_should_return_jwt_key_from_login()
     {
         $this->withoutExceptionHandling();
-        $this->post('api/auth/login', ['email' => $this->user->email, 'password' => '123456'])
+        $this->post('api/staff/auth/login', ['email' => $this->staff->email, 'password' => '123456'])
             ->assertStatus(Response::HTTP_OK)
             ->assertJsonStructure(['token', 'message']);
 
-        $user = auth('api')->user();
+        $user = auth('staff-api')->user();
 
-        $this->assertEquals($user->id, $this->user->id);
+        $this->assertEquals($user->id, $this->staff->id);
     }
 
     /**
@@ -50,9 +50,9 @@ class UserAuthenticationTest extends TestCase
     public function it_can_open_authenticated_routes_with_the_token()
     {
         $this->withoutExceptionHandling();
-        $this->post('api/auth/login', ['email' => $this->user->email, 'password' => '123456']);
-        $this->get('api/account/me')->assertJsonStructure(['data'])->assertSee($this->user->name);
-        $this->assertAuthenticatedAs($this->user);
+        $this->post('api/staff/auth/login', ['email' => $this->staff->email, 'password' => '123456']);
+        $this->get('api/staff/me')->assertJsonStructure(['data'])->assertSee($this->staff->name);
+        $this->assertAuthenticatedAs($this->staff);
     }
 
     /**
@@ -60,7 +60,7 @@ class UserAuthenticationTest extends TestCase
      */
     public function it_should_throw_an_exception_when_credentials_are_invalid()
     {
-        $this->post('api/auth/login', ['email' => $this->user->email, 'password' => '1234567'])->assertStatus(Response::HTTP_UNAUTHORIZED);
+        $this->post('api/staff/auth/login', ['email' => $this->staff->email, 'password' => '1234567'])->assertStatus(Response::HTTP_UNAUTHORIZED);
     }
 
     /**
@@ -69,8 +69,8 @@ class UserAuthenticationTest extends TestCase
     public function it_should_logout_user()
     {
         $this->withoutExceptionHandling();
-        $this->post('api/auth/login', ['email' => $this->user->email, 'password' => '123456']);
-        $this->delete('api/auth/logout')->assertStatus(Response::HTTP_ACCEPTED);
+        $this->post('api/staff/auth/login', ['email' => $this->staff->email, 'password' => '123456']);
+        $this->delete('api/staff/auth/logout')->assertStatus(Response::HTTP_ACCEPTED);
         $this->assertGuest('api');
     }
 

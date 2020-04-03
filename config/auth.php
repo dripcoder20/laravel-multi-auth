@@ -47,11 +47,11 @@ return [
             'hash' => false,
         ],
 
-//        'admin-api' => [
-//            'driver' => 'jwt',
-//            'provider' => 'staff',
-//            'hash' => false,
-//        ],
+        'staff-api' => [
+            'driver' => 'jwt',
+            'provider' => 'staff',
+            'hash' => false,
+        ],
     ],
 
     /*
