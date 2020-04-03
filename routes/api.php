@@ -19,6 +19,7 @@ Route::middleware('auth:api')->get('/user', function (Request $request) {
 });
 Route::post('auth/login', "AuthController@store");
 
-Route::group(['middleware'=>'auth:api'], function(){
-   Route::get('account/me', "AuthController@show");
+Route::group(['middleware' => 'auth:api'], function () {
+    Route::get('account/me', "AuthController@show");
+    Route::delete('auth/logout', "AuthController@destroy");
 });

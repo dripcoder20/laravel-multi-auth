@@ -4,10 +4,8 @@ namespace Tests\Feature;
 
 use App\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\Response;
 use Tests\TestCase;
-use Tymon\JWTAuth\JWT;
 
 class UserAuthenticationTest extends TestCase
 {
@@ -58,9 +56,21 @@ class UserAuthenticationTest extends TestCase
     }
 
     /**
-    * @test
-    */
-    public function it_should_throw_an_exception_when_credentials_are_invalid() {
+     * @test
+     */
+    public function it_should_throw_an_exception_when_credentials_are_invalid()
+    {
         $this->post('api/auth/login', ['email' => $this->user->email, 'password' => '1234567'])->assertStatus(Response::HTTP_UNAUTHORIZED);
+    }
+
+    /**
+     * @test
+     */
+    public function it_should_logout_user()
+    {
+        $this->withoutExceptionHandling();
+        $this->post('api/auth/login', ['email' => $this->user->email, 'password' => '123456']);
+        $this->delete('api/auth/logout')->assertStatus(Response::HTTP_ACCEPTED);
+        $this->assertGuest('api');
     }
 }
